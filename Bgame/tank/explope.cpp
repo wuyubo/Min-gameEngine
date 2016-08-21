@@ -49,3 +49,9 @@ void Explope::updateArea()
 {
     m_img->setDrawArea(m_area);
 }
+
+void Explope::bomb(int x, int y, int r)
+{
+    Explope *m_bomb = new Explope(m_widget);
+    m_bomb->location(x, y, r);
+}

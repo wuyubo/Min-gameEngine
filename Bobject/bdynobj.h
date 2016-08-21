@@ -10,7 +10,7 @@
 
 namespace Bigo {
     enum DIRECTION{
-        UP,
+        UP = 0,
         DN,
         LF,
         RG,
@@ -72,13 +72,14 @@ namespace Bigo {
         DIRECTION m_direction;
         Bint m_step;
         Bint m_speed;
-        QWidget *m_widget;
         bool m_isTouch;
         BdynObjId_t m_id;
         Bdarea_t m_area;
         static Bu32 gl_id;
         int m_beyond;
         QTimer *m_timer;
+
+        static QWidget *m_widget;
     };
     typedef QVector<BdynObj *> BdynbObjList;
 }

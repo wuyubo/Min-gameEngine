@@ -18,7 +18,6 @@ TankWidget::~TankWidget()
     delete downbtn;
     delete leftbtn;
     delete rightbtn;
-
 //    delete me_army;
 
 //    for(i = 0; i<tankteams.size(); i++)
@@ -42,6 +41,8 @@ void TankWidget::init()
     createTank(MEARMY);
     createTank(ENARMY);
     createTank(ENARMY);
+    m_brick = new Tbrick(this);
+    m_brick->createDrawArea(500, 500, 80, 20);
 }
 
 

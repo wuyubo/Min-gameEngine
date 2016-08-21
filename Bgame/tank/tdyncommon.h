@@ -16,11 +16,9 @@ public:
     virtual Bbool isOutside();
     virtual void setType(TANKTYPE type);
     virtual void updateId();
-    virtual void bomb();
 
 public:
     TANKTYPE  m_type;
-    Explope *m_bomb;
 };
 
 #endif // TDYNCOMMON_H

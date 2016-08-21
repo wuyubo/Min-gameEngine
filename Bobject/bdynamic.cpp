@@ -21,9 +21,11 @@ namespace Bigo {
             iter != BglobalObjs::gl_allObjs.end(); iter++)
         {
             tempObj = *iter;
-            if(tempObj->drawArea().site_begin.z == m_area.site_begin.z
-                    && m_id.id != tempObj->m_id.dynId->id)
+            if(!ignoreCrash(tempObj)
+                    &&tempObj->drawArea().site_begin.z == m_area.site_begin.z)
             {
+                if(tempObj->m_id.state == BIDDYNAMI && m_id.id == tempObj->m_id.dynId->id)
+                    continue;
                 if(checkIsTouch(tempObj))
                 {
                     dealCrash(tempObj);
@@ -36,44 +38,79 @@ namespace Bigo {
 
     Bbool Bdynamic::checkIsTouch(Bobject *bobj)
     {
+        if(bobj->m_id.state == BIDSTATIC)
+        {
+            return checkStcObj(bobj->drawArea());
+        }
+        else if(bobj->m_id.state == BIDDYNAMI) {
+            return checkDynObj(BglobalObjs::dynObjReflect(bobj));
+        }
+
+        return false;
+    }
+
+    Bbool Bdynamic::checkStcObj(Bdarea_t area)
+    {
         Bdarea_t tmpA = m_area;
-        Bdarea_t tmpB = bobj->drawArea();
-//        switch (m_direction) {
-//        case UP:
-//           if(tmpB.site_begin.y > tmpA.site_begin.y
-//               && tmpB.site_begin.y > tmpA.site_begin.y + m_speed) return false;
-//            break;
-//        case DN:
-//            if(tmpB.site_begin.y < tmpA.site_begin.y
-//                && tmpB.site_begin.y < tmpA.site_begin.y - m_speed) return false;
-//            break;
-//        case LF:
-//            if(tmpB.site_begin.x > tmpA.site_begin.x
-//                 && tmpB.site_begin.x > tmpA.site_begin.x+m_speed) return false;
-//            break;
-//        case RG:
-//            if(tmpB.site_begin.x < tmpA.site_begin.x
-//                 && tmpB.site_begin.y < tmpA.site_begin.y-m_speed) return false;
-//            break;
-//        default:
-//            break;
-//        }
-        if(tmpB.site_end.y < tmpA.site_begin.y) return false;
-        if(tmpB.site_begin.x > tmpA.site_end.x) return false;
-        if(tmpB.site_begin.y > tmpA.site_end.y) return false;
-        if(tmpB.site_end.x < tmpA.site_begin.x) return false;
+        Bdarea_t tmpB = area;
         switch (m_direction) {
         case UP:
-            m_beyond = tmpA.site_begin.y - tmpB.site_end.y;
+            tmpA.site_end.y += m_step-(m_area.site_end.y-m_area.site_begin.y);
+            break;
+        case DN:
+            tmpA.site_begin.y -= m_step+(m_area.site_end.y-m_area.site_begin.y);
+            break;
+        case LF:
+            tmpA.site_end.x += m_step-(m_area.site_end.x-m_area.site_begin.x);
+            break;
+        case RG:
+            tmpA.site_begin.x -= m_step+(m_area.site_end.x-m_area.site_begin.x);
+            break;
+        default:
+            break;
+        }
+
+        if(tmpB.site_end.x <= tmpA.site_begin.x) return false;
+        if(tmpB.site_begin.x >= tmpA.site_end.x) return false;
+
+        if(tmpB.site_end.y <= tmpA.site_begin.y) return false;
+        if(tmpB.site_begin.y >= tmpA.site_end.y) return false;
+
+        switch (m_direction) {
+        case UP:
+           m_beyond = tmpB.site_end.y - tmpA.site_begin.y;
             break;
         case DN:
             m_beyond = tmpA.site_end.y - tmpB.site_begin.y;
             break;
         case LF:
-            m_beyond = tmpA.site_begin.x - tmpB.site_end.x;
+            m_beyond = tmpB.site_end.x - tmpA.site_begin.x;
             break;
         case RG:
             m_beyond = tmpA.site_end.x - tmpB.site_begin.x;
+            break;
+        default:
+            break;
+        }
+        return true;
+    }
+
+    Bbool Bdynamic::checkDynObj(BdynObj *dobj)
+    {
+
+        return checkStcObj(dobj->m_area);
+        switch (m_direction) {
+        case UP:
+           if(dobj->m_direction != DN ) return checkStcObj(dobj->m_area);
+            break;
+        case DN:
+            if(dobj->m_direction != UP) return checkStcObj(dobj->m_area);
+            break;
+        case LF:
+            if(dobj->m_direction != RG) return checkStcObj(dobj->m_area);
+            break;
+        case RG:
+            if(dobj->m_direction != LF) return checkStcObj(dobj->m_area);
             break;
         default:
             break;
@@ -117,6 +154,11 @@ namespace Bigo {
     {
         this->stopMove();
         m_id.exist = false;
+    }
+
+    Bbool Bdynamic::ignoreCrash(Bobject *bobj)
+    {
+        return false;
     }
 }
 

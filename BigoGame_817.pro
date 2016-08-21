@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     Bobject/bstatic.cpp \
     Bobject/bbasewidget.cpp \
     Bgame/tank/tdyncommon.cpp \
-    Bgame/tank/explope.cpp
+    Bgame/tank/explope.cpp \
+    Bgame/tank/tbrick.cpp
 
 HEADERS  += widget.h \
     Bobject/btypes.h \
@@ -52,6 +53,7 @@ HEADERS  += widget.h \
     Bobject/bstatic.h \
     Bobject/bbasewidget.h \
     Bgame/tank/tdyncommon.h \
-    Bgame/tank/explope.h
+    Bgame/tank/explope.h \
+    Bgame/tank/tbrick.h
 
 FORMS    +=

@@ -14,11 +14,14 @@ namespace Bigo {
         virtual ~Bdynamic();
         virtual Bbool doRegion();
         virtual Bbool checkIsTouch(Bobject *bobj);
+        virtual Bbool checkStcObj(Bdarea_t area);
+        virtual Bbool checkDynObj(BdynObj *dobj);
         virtual void dealCrash(Bobject * target);
         virtual Bbool isTouch();
         virtual Bbool isOutside();
         virtual void dealOutside();
         virtual void killed();
+        virtual Bbool ignoreCrash(Bobject *bobj);
 
 
     };

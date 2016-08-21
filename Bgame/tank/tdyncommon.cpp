@@ -68,11 +68,5 @@ void TdynCommon::updateId()
     }
 }
 
-void TdynCommon::bomb()
-{
-    m_bomb = new Explope(m_widget);
-    m_bomb->location(m_area.site_begin.x, m_area.site_begin.y,
-                  m_area.site_end.x-m_area.site_begin.x);
-}
 
 

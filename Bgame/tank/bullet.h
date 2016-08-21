@@ -28,6 +28,7 @@ public:
     void dealOutside();
     void updateArea();
     void hook_moveStep();
+    Bbool ignoreCrash(Bobject *bobj);
 
 private:
     Bellipse* m_ellipse;

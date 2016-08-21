@@ -3,16 +3,17 @@
 namespace Bigo {
 
     Bu32 BdynObj::gl_id = 1;
+    QWidget *BdynObj::m_widget = NULL;
     BdynObj::BdynObj(QWidget *parent):
         QThread(parent),
         running(false),
         m_direction(UP),
         m_step(BIGSTEP),
         m_speed(FAST),
-        m_widget(parent),
         m_isTouch(false),
         m_beyond(0)
     {
+        m_widget = parent;
         createId();
         m_timer = new QTimer(m_widget);
         connect(m_timer,SIGNAL(timeout()), this, SLOT(moving()));

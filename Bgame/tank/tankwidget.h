@@ -10,6 +10,7 @@
 #include "Bobject/bbasewidget.h"
 #include <QPushButton>
 #include "explope.h"
+#include "tbrick.h"
 
 class TankWidget : public BbaseWidget
 {
@@ -42,6 +43,7 @@ private:
     QPushButton *downbtn;
     QPushButton *leftbtn;
     QPushButton *rightbtn;
+    Tbrick *m_brick;
 };
 
 #endif // TANKWIDGET_H

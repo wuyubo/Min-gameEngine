@@ -17,11 +17,13 @@ public:
     void location(int x, int y, int r);
     void setImgPath(QString path);
     void updateArea();
+public:
+    static void bomb(int x, int y, int r);
 
 private:
     Bimage *m_img;
-    QString m_imgpath;
     int m_time;
+    QString m_imgpath;
 
 };
 

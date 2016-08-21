@@ -45,19 +45,27 @@ void Bullet::location(int x, int y)
 
 void Bullet::dealCrash(Bobject *target)
 {
-    if(target->m_id.state == BIDDYNAMI &&
-            target->m_id.dynId->fofoe == m_id.fofoe) return;
-
-    BdynObj *d = BglobalObjs::dynObjReflect(target);
-    TdynCommon * tobj= (TdynCommon *)d;
-    tobj->bomb();
-    tobj->killed();
+    Bdarea_t temp;
+    if(target->m_id.state == BIDDYNAMI)
+    {
+       if(target->m_id.dynId->fofoe == m_id.fofoe) return;
+        BdynObj *d = BglobalObjs::dynObjReflect(target);
+        temp = d->m_area;
+    }
+    else if(target->m_id.state == BIDSTATIC)
+    {
+        temp = target->drawArea();
+    }
+    target->killed();
+    Explope::bomb(temp.site_begin.x, temp.site_begin.y,
+                  temp.site_end.x-temp.site_begin.x);
     this->killed();
 }
 
 void Bullet::dealOutside()
 {
-   bomb();
+   Explope::bomb(m_area.site_begin.x, m_area.site_begin.y,
+                  m_area.site_end.x-m_area.site_begin.x);
    this->killed();
 }
 
@@ -72,5 +80,13 @@ void Bullet::hook_moveStep()
 //        m_speed += 2;
     if(m_step > 20)
         m_step -= 3;
+}
+
+Bbool Bullet::ignoreCrash(Bobject *bobj)
+{
+    if(bobj->m_id.state == BIDDYNAMI &&
+            bobj->m_id.dynId->fofoe == m_id.fofoe)
+        return true;
+    return false;
 }
 
