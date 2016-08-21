@@ -11,6 +11,7 @@
 #include <QPushButton>
 #include "explope.h"
 #include "tbrick.h"
+#include "enemymanage.h"
 
 class TankWidget : public BbaseWidget
 {
@@ -44,6 +45,7 @@ private:
     QPushButton *leftbtn;
     QPushButton *rightbtn;
     Tbrick *m_brick;
+    EnemyManage *m_enManage;
 };
 
 #endif // TANKWIDGET_H

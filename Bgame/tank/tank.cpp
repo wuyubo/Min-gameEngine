@@ -1,5 +1,8 @@
 #include "tank.h"
 
+int Tank::enarmy_count = 0;
+int Tank::mearmy_count = 0;
+
 Tank::Tank(QWidget *parent):
     TdynCommon(parent)
 {
@@ -21,6 +24,16 @@ Tank::~Tank()
 {
     if(running)
         this->stopMove();
+    switch (m_type) {
+    case MEARMY:
+        mearmy_count--;
+        break;
+    case ENARMY:
+        enarmy_count--;
+        break;
+    default:
+        break;
+    }
     m_img->killed();
     delete m_img;
     delete m_shootTimer;
@@ -34,21 +47,28 @@ void Tank::tankInit()
     m_shootTimer = new QTimer(m_widget);
     connect(m_shootTimer,SIGNAL(timeout()), this, SLOT(randshoot()));
     src_Init();
-
+    m_shootInterval = 0;
 }
 
 void Tank::setup()
 {
+
+    int bx;
     switch (m_type) {
     case MEARMY:
-        creatDrawArea(TBIGX_BG+TWIND_BG/2-TWIDTH/2, TBIGY_BG+THEIG_BG-THEIGHT, TWIDTH, THEIGHT);
         turnDirection(UP);
+        creatDrawArea(TBIGX_BG+TWIND_BG/2-TWIDTH/2, TBIGY_BG+THEIG_BG-THEIGHT, TWIDTH, THEIGHT);
+        mearmy_count++;
         break;
     case ENARMY:
-        creatDrawArea(TBIGX_BG+(TWIND_BG/3)*((qrand()+m_id.id)%3),
-                      TBIGY_BG, TWIDTH, THEIGHT);
         turnDirection(DN);
+        bx = (qrand()+m_id.id)%4;
+        if(bx == 3)
+            bx =(TWIND_BG/3)*bx - TWIDTH;
+        else bx =(TWIND_BG/3)*bx;
+        creatDrawArea(TBIGX_BG+bx, TBIGY_BG, TWIDTH, THEIGHT);
         this->startMove();
+        enarmy_count++;
         break;
     default:
         break;
@@ -131,7 +151,7 @@ void Tank::shoot()
 
 void Tank::randshoot()
 {
-   if(qrand()%5 < 3)
+   if(BglobalObjs::Brand(10) < 4)
         shoot();
 }
 
@@ -145,13 +165,15 @@ void Tank::hook_moveStep()
 void Tank::randTurn()
 {
     static int keep = 0;
-    if(++keep < qrand()%10+4 && !m_isTouch)
+    int rand = BglobalObjs::Brand(10);
+    keep ++;
+    if(keep < rand+4 && !m_isTouch)
     {
         return;
     }
     keep = 0;
 
-    switch (qrand()%4) {
+    switch (BglobalObjs::Brand(4)) {
     case UP:
         turnDirection(UP);
         break;
@@ -183,4 +205,23 @@ void Tank::hook_start()
 void Tank::hook_stop()
 {
     m_shootTimer->stop();
+}
+
+
+Bbool Tank::ignoreCrash(Bobject *bobj)
+{
+    if(bobj->m_id.state == BIDDYNAMI &&
+            bobj->m_id.dynId->type == IDBULL)
+        return true;
+    return false;
+}
+
+int Tank::getEnarmyCount()
+{
+    return enarmy_count;
+}
+
+int Tank::getMearmyCount()
+{
+    return mearmy_count;
 }

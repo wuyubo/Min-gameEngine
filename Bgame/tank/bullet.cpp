@@ -33,7 +33,7 @@ void Bullet::bulletInit()
     m_ellipse->setColor(255,255,255);
     m_ellipse->setStyle(ESOLID);
     m_speed = 200;
-    m_step = 50;
+    m_step = 60;
 }
 
 
@@ -57,16 +57,18 @@ void Bullet::dealCrash(Bobject *target)
         temp = target->drawArea();
     }
     target->killed();
+    this->killed();
     Explope::bomb(temp.site_begin.x, temp.site_begin.y,
                   temp.site_end.x-temp.site_begin.x);
-    this->killed();
+
 }
 
 void Bullet::dealOutside()
 {
+   this->killed();
    Explope::bomb(m_area.site_begin.x, m_area.site_begin.y,
                   m_area.site_end.x-m_area.site_begin.x);
-   this->killed();
+
 }
 
 void Bullet::updateArea()
@@ -76,8 +78,8 @@ void Bullet::updateArea()
 
 void Bullet::hook_moveStep()
 {
-//    if(m_speed < 600)
-//        m_speed += 2;
+    if(m_speed < 400)
+        m_speed += 2;
     if(m_step > 20)
         m_step -= 3;
 }

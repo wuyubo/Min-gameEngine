@@ -2,12 +2,12 @@
 
 Explope::Explope(QWidget *parent) :
     Bdynamic(parent),
-    m_time(3),
+    m_time(4),
     m_imgpath("img/tank/bomb.png")
 {
     m_img = new Bimage(parent);
     m_img->setPath(m_imgpath);
-    m_speed = FEST;
+    m_speed = 200;
 }
 
 Explope::~Explope()
@@ -35,7 +35,7 @@ Bbool Explope::isTouch()
 
 void Explope::location(int x, int y, int r)
 {
-    m_area = m_img->createDrawAreaThree(x-r/2, y-r/2, 0, 2*r, 2*r, 0);
+    m_area = m_img->createDrawAreaThree(x, y, 0, r, r, 0);
     startMove();
 }
 

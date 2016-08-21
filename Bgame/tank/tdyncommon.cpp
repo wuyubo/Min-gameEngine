@@ -8,7 +8,7 @@ TdynCommon::TdynCommon(QWidget *parent) :
 
 TdynCommon::~TdynCommon()
 {
-//    delete m_bomb;
+
 }
 
 Bbool TdynCommon::isOutside()
@@ -67,6 +67,8 @@ void TdynCommon::updateId()
         break;
     }
 }
+
+
 
 
 

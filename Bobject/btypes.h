@@ -47,7 +47,7 @@ namespace Bigo {
         Bbool  exist;
         Bbyte  type;
         BdynObjId_t  *dynId;
-        Bu32  remain2;
+        Bu32  remain;
     }BObjId_t;
 
     enum IDVAULE_BSTATE{

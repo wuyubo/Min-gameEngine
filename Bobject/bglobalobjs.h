@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QTime>
 #include "Bobject/bobjects.h"
 #include "Bobject/bdynobj.h"
 
@@ -23,6 +24,7 @@ namespace Bigo {
         static BdynObj * dynObjsremove(int index);
         static Bobject * allObjsremove(int index);
         static BdynObj * dynObjReflect(Bobject *bobj);
+        static Bint Brand(Bint range);
     public:
         static BobjectLists gl_stcObjs;
         static BdynbObjList gl_dynObjs;

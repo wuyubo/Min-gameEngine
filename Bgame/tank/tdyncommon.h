@@ -17,6 +17,7 @@ public:
     virtual void setType(TANKTYPE type);
     virtual void updateId();
 
+
 public:
     TANKTYPE  m_type;
 };

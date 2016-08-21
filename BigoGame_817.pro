@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     Bobject/bbasewidget.cpp \
     Bgame/tank/tdyncommon.cpp \
     Bgame/tank/explope.cpp \
-    Bgame/tank/tbrick.cpp
+    Bgame/tank/tbrick.cpp \
+    Bgame/tank/enemymanage.cpp
 
 HEADERS  += widget.h \
     Bobject/btypes.h \
@@ -54,6 +55,7 @@ HEADERS  += widget.h \
     Bobject/bbasewidget.h \
     Bgame/tank/tdyncommon.h \
     Bgame/tank/explope.h \
-    Bgame/tank/tbrick.h
+    Bgame/tank/tbrick.h \
+    Bgame/tank/enemymanage.h
 
 FORMS    +=

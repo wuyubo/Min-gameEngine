@@ -23,8 +23,8 @@ enum DYNIDVALUE{
 enum TANKBG{
     TBIGX_BG = 0,
     TBIGY_BG = 0,
-    TWIND_BG = WINDOWS_W-200,
-    THEIG_BG = WINDOWS_H,
+    TWIND_BG = (WINDOWS_W-200),
+    THEIG_BG = (WINDOWS_H),
 };
 
 

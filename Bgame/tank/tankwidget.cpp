@@ -10,23 +10,15 @@ TankWidget::TankWidget(QWidget *parent) :
 
 TankWidget::~TankWidget()
 {
-//    Tank *tmptank;
-//    int i;
+
     delete startbtn;
     delete exitbtn;
     delete upbtn;
     delete downbtn;
     delete leftbtn;
     delete rightbtn;
-//    delete me_army;
+    delete m_enManage;
 
-//    for(i = 0; i<tankteams.size(); i++)
-//    {
-//        tmptank = tankteams[i];
-//        tmptank->stopMove();
-//        delete tmptank;
-//    }
-//    tankteams.clear();
 
 }
 void TankWidget::init()
@@ -39,10 +31,11 @@ void TankWidget::init()
     m_bg_rect->setStyle(RSOLID);
 
     createTank(MEARMY);
-    createTank(ENARMY);
-    createTank(ENARMY);
+//    createTank(ENARMY);
+//    createTank(ENARMY);
     m_brick = new Tbrick(this);
-    m_brick->createDrawArea(500, 500, 80, 20);
+    m_brick->location(200, 300);
+    m_enManage = new EnemyManage(this);
 }
 
 

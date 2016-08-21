@@ -42,7 +42,7 @@ namespace Bigo {
         m_id.type = BIDUNKW;
         m_id.offset = 0;
         m_id.dynId = NULL;
-        m_id.remain2 = 0;
+        m_id.remain = 0;
         m_id.exist = true;
     }
 

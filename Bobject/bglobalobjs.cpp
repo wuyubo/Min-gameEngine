@@ -79,4 +79,13 @@ namespace Bigo {
         if(bobj->m_id.state != BIDDYNAMI) return NULL;
         return gl_dynObjs[bobj->m_id.dynId->id];
     }
+
+    Bint BglobalObjs::Brand(Bint range)
+    {
+        int i=qrand();
+        QTime t;
+        t= QTime::currentTime();
+        qsrand(t.msec()+t.second()*1000+i);
+        return qrand()%range;
+    }
 }

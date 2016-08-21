@@ -13,6 +13,8 @@ using namespace Bigo;
 
 #define TWIDTH 50
 #define THEIGHT 50
+#define MAXBCOUNT 4
+#define MINSINTER 3
 
 class Tank: public TdynCommon
 {
@@ -34,16 +36,22 @@ public:
     void hook_start();
     void hook_stop();
     void shoot();
+    Bbool ignoreCrash(Bobject *bobj);
+    void updateArea();
 public slots:
     void randshoot();
 
-
-    void updateArea();
+public:
+    static int getEnarmyCount();
+    static int getMearmyCount();
 private:
     Bimage *m_img;
     QString m_img_src[5];
     BulletClip m_bullets;
     QTimer *m_shootTimer;
+    int m_shootInterval;
+    static int enarmy_count;
+    static int mearmy_count;
 };
 
 typedef QVector<Tank*> TankTeamp;
