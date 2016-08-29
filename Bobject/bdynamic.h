@@ -12,17 +12,23 @@ namespace Bigo {
     public:
         explicit Bdynamic(QWidget *parent = 0);
         virtual ~Bdynamic();
+        void show();
         virtual Bbool doRegion();
         virtual Bbool checkIsTouch(Bobject *bobj);
         virtual Bbool checkStcObj(Bdarea_t area);
         virtual Bbool checkDynObj(BdynObj *dobj);
-        virtual void dealCrash(Bobject * target);
         virtual Bbool isTouch();
+        virtual void moveAction();
+        virtual void moveBack();
         virtual Bbool isOutside();
         virtual void dealOutside();
-        virtual void killed();
+        virtual void dealCrash(Bobject *bobj);
         virtual Bbool ignoreCrash(Bobject *bobj);
+    public:
+        virtual void hook_kill_myself();
 
+    public slots:
+        virtual void kill_myself();
 
     };
 }

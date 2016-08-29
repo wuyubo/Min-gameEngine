@@ -31,7 +31,13 @@ SOURCES += main.cpp\
     Bgame/tank/tdyncommon.cpp \
     Bgame/tank/explope.cpp \
     Bgame/tank/tbrick.cpp \
-    Bgame/tank/enemymanage.cpp
+    Bgame/tank/enemymanage.cpp \
+    Bthread/bthreadengine.cpp \
+    Bthread/bthreadtaskitem.cpp \
+    Bthread/bthreadobject.cpp \
+    Bobject/bcleaner.cpp \
+    Bobject/bbackglound.cpp \
+    Bobject/bcleanobj.cpp
 
 HEADERS  += widget.h \
     Bobject/btypes.h \
@@ -56,6 +62,12 @@ HEADERS  += widget.h \
     Bgame/tank/tdyncommon.h \
     Bgame/tank/explope.h \
     Bgame/tank/tbrick.h \
-    Bgame/tank/enemymanage.h
+    Bgame/tank/enemymanage.h \
+    Bthread/bthreadengine.h \
+    Bthread/bthreadtaskitem.h \
+    Bthread/bthreadobject.h \
+    Bobject/bcleaner.h \
+    Bobject/bbackglound.h \
+    Bobject/bcleanobj.h
 
 FORMS    +=

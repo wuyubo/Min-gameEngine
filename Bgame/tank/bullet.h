@@ -21,7 +21,7 @@ public:
     explicit Bullet(TANKTYPE type, DIRECTION d, QWidget *parent = 0);
     ~Bullet();
     void bulletInit();
-
+    void hook_kill_myself();
 public:
     void location(int x, int y);
     void dealCrash(Bobject * target);
@@ -29,11 +29,15 @@ public:
     void updateArea();
     void hook_moveStep();
     Bbool ignoreCrash(Bobject *bobj);
+public slots:
+    void bomb(int x, int y, int r);
+signals:
+    void evt_bomb(int x, int y, int r);
 
 private:
     Bellipse* m_ellipse;
-
     int m_r;
+
 };
 typedef QVector<Bullet *> BulletClip;
 

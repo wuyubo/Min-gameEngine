@@ -2,6 +2,7 @@
 
 namespace Bigo {
 
+    Bu32 Bobject::gl_obj_id_value = 1;
     Bobject::Bobject(QWidget *parent):
         QWidget(parent)
     {
@@ -19,6 +20,7 @@ namespace Bigo {
 
     Bobject::~Bobject()
     {
+        delete m_pen;
         objRelease();
     }
 
@@ -28,22 +30,28 @@ namespace Bigo {
         m_pen = new QPen(Qt::black, 1, Qt::SolidLine);
         m_state = EXIST;
         createId();
+        connect(this, SIGNAL(evt_release()), this, SLOT(release_myslef()));
     }
 
     void Bobject::objRelease()
     {
-        delete m_pen;
+
     }
 
     void Bobject::createId()
     {
-        m_id.id = 0;
+        m_id.id = gl_obj_id_value++;
         m_id.state = BIDSTATIC;
         m_id.type = BIDUNKW;
         m_id.offset = 0;
         m_id.dynId = NULL;
         m_id.remain = 0;
         m_id.exist = true;
+    }
+
+    void Bobject::release()
+    {
+        emit evt_release();
     }
 
     void Bobject::paintEvent(QPaintEvent *)
@@ -59,16 +67,22 @@ namespace Bigo {
     }
     void Bobject::brush(QPainter &painter)
     {
-        painter.setPen(*m_pen);
-        painting(painter);
+        if(m_id.exist)
+        {
+            painter.setPen(*m_pen);
+            painting(painter);
+        }
     }
 
-    void Bobject::killed()
+
+
+    void Bobject::release_myslef()
     {
-        m_state = DISAP;
-        m_id.exist = false;
-//        delete this;
+        if(isExist()) killed();
+        disconnect(this, SIGNAL(evt_release()), this, SLOT(release_myslef()));
+        delete this;
     }
+
     Bbool Bobject::isExist()
     {
         return m_id.exist;

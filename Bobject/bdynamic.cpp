@@ -4,49 +4,46 @@ namespace Bigo {
     Bdynamic::Bdynamic(QWidget *parent) :
         BdynObj(parent)
     {
-        m_id.id = BglobalObjs::dynObjsCount();
-        BglobalObjs::dynObjsAppend(this);
-
+        show();
+        connect(this, SIGNAL(evt_send_to_thread(BdynObj*)), BglobalObjs::ptEngine(), SLOT(append_new(BdynObj*)));
     }
 
     Bdynamic::~Bdynamic()
     {
-        BglobalObjs::dynObjsremove(m_id.id);
+
+    }
+
+    void Bdynamic::show()
+    {
+        m_id.exist = true;
+        BglobalObjs::dynObjappend(&m_id, this);
     }
 
     Bbool Bdynamic::doRegion()
     {
-        Bobject *tempObj;
-        for(QVector<Bobject*>::Iterator iter = BglobalObjs::gl_allObjs.begin();
-            iter != BglobalObjs::gl_allObjs.end(); iter++)
-        {
-            tempObj = *iter;
-            if(!ignoreCrash(tempObj)
-                    &&tempObj->drawArea().site_begin.z == m_area.site_begin.z)
+        BobjectList_t objList = BglobalObjs::stcObjList();
+        foreach (Bobject *bobj, objList) {
+            if(!ignoreCrash(bobj)
+                    &&bobj->drawArea().site_begin.z == m_area.site_begin.z)
             {
-                if(tempObj->m_id.state == BIDDYNAMI && m_id.id == tempObj->m_id.dynId->id)
+//                if(BglobalObjs::isUpdate()) break;
+                if(bobj->m_id.state == BIDDYNAMI && m_id.id == bobj->m_id.dynId->id)
                     continue;
-                if(checkIsTouch(tempObj))
+                if(checkIsTouch(bobj))
                 {
-                    dealCrash(tempObj);
+                    dealCrash(bobj);
+                    BglobalObjs::dealfinished();
                     return true;
                 }
             }
         }
+        BglobalObjs::dealfinished();
         return false;
     }
 
     Bbool Bdynamic::checkIsTouch(Bobject *bobj)
     {
-        if(bobj->m_id.state == BIDSTATIC)
-        {
-            return checkStcObj(bobj->drawArea());
-        }
-        else if(bobj->m_id.state == BIDDYNAMI) {
-            return checkDynObj(BglobalObjs::dynObjReflect(bobj));
-        }
-
-        return false;
+        return checkStcObj(bobj->drawArea());
     }
 
     Bbool Bdynamic::checkStcObj(Bdarea_t area)
@@ -97,30 +94,7 @@ namespace Bigo {
 
     Bbool Bdynamic::checkDynObj(BdynObj *dobj)
     {
-
         return checkStcObj(dobj->m_area);
-        switch (m_direction) {
-        case UP:
-           if(dobj->m_direction != DN ) return checkStcObj(dobj->m_area);
-            break;
-        case DN:
-            if(dobj->m_direction != UP) return checkStcObj(dobj->m_area);
-            break;
-        case LF:
-            if(dobj->m_direction != RG) return checkStcObj(dobj->m_area);
-            break;
-        case RG:
-            if(dobj->m_direction != LF) return checkStcObj(dobj->m_area);
-            break;
-        default:
-            break;
-        }
-        return true;
-    }
-
-    void Bdynamic::dealCrash(Bobject * target)
-    {
-        target = target;
     }
 
     Bbool Bdynamic::isTouch()
@@ -140,6 +114,74 @@ namespace Bigo {
         return m_isTouch;
     }
 
+
+    void Bdynamic::moveAction()
+    {
+        switch (m_direction) {
+        case UP:
+            m_area.site_begin.y -= m_step;
+            m_area.site_end.y -= m_step;
+            break;
+        case DN:
+            m_area.site_begin.y += m_step;
+            m_area.site_end.y += m_step;
+            break;
+        case LF:
+            m_area.site_begin.x -= m_step;
+            m_area.site_end.x -= m_step;
+            break;
+        case RG:
+            m_area.site_begin.x += m_step;
+            m_area.site_end.x += m_step;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void Bdynamic::moveBack()
+    {
+        switch (m_direction) {
+        case UP:
+            m_area.site_begin.y += m_beyond;
+            m_area.site_end.y += m_beyond;
+            break;
+        case DN:
+            m_area.site_begin.y -= m_beyond;
+            m_area.site_end.y -= m_beyond;
+            break;
+        case LF:
+            m_area.site_begin.x += m_beyond;
+            m_area.site_end.x += m_beyond;
+            break;
+        case RG:
+            m_area.site_begin.x -= m_beyond;
+            m_area.site_end.x -= m_beyond;
+            break;
+        default:
+            break;
+        }
+        m_beyond = 0;
+        updateArea();
+    }
+
+    void Bdynamic::kill_myself()
+    {
+        if(isExist())
+        {
+            stopMove();
+            disconnect(this, SIGNAL(evt_send_to_thread(BdynObj*)), BglobalObjs::ptEngine(), SLOT(append_new(BdynObj*)));
+            BglobalObjs::dynObjremove(&m_id);
+            m_id.exist = false;
+            hook_kill_myself();
+        }
+    }
+
+    void Bdynamic::hook_kill_myself()
+    {
+
+    }
+
     Bbool Bdynamic::isOutside()
     {
         return false;
@@ -150,15 +192,17 @@ namespace Bigo {
 
     }
 
-    void Bdynamic::killed()
+    void Bdynamic::dealCrash(Bobject *bobj)
     {
-        this->stopMove();
-        m_id.exist = false;
+        bobj = bobj;
     }
 
     Bbool Bdynamic::ignoreCrash(Bobject *bobj)
     {
+        bobj=bobj;
         return false;
     }
+
+
 }
 

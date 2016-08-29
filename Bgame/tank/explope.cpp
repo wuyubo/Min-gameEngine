@@ -12,19 +12,20 @@ Explope::Explope(QWidget *parent) :
 
 Explope::~Explope()
 {
-    delete m_img;
+//    m_img->disappeared();
+//    delete m_img;
 }
 
 void Explope::moveAction()
 {
     static int times = 0;
 
-    m_area.site_begin.x -= 5;
-    m_area.site_begin.y -= 5;
-    m_area.site_end.x += 5;
-    m_area.site_end.y += 5;
+    m_area.site_begin.x -= 10;
+    m_area.site_begin.y -= 10;
+    m_area.site_end.x += 10;
+    m_area.site_end.y += 10;
 
-    if(times++ > m_time)
+//    if(times++ > m_time)
         killed();
 }
 
@@ -36,7 +37,8 @@ Bbool Explope::isTouch()
 void Explope::location(int x, int y, int r)
 {
     m_area = m_img->createDrawAreaThree(x, y, 0, r, r, 0);
-    startMove();
+//    startMove();
+    moveAction();
 }
 
 void Explope::setImgPath(QString path)
@@ -48,6 +50,11 @@ void Explope::setImgPath(QString path)
 void Explope::updateArea()
 {
     m_img->setDrawArea(m_area);
+}
+
+void Explope::hook_kill_myself()
+{
+    m_img->killed();
 }
 
 void Explope::bomb(int x, int y, int r)

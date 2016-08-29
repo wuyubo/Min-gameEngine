@@ -12,6 +12,7 @@
 #include "explope.h"
 #include "tbrick.h"
 #include "enemymanage.h"
+#include "Bobject/bbackglound.h"
 
 class TankWidget : public BbaseWidget
 {
@@ -35,7 +36,7 @@ public slots:
      void rightClicked();
 
 private:
-    Brect *m_bg_rect;
+    BBackglound *m_bg;
     TankTeamp tankteams;
     Tank *me_army;
     QPushButton *startbtn;

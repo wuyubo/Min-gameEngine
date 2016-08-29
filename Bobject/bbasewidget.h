@@ -5,6 +5,8 @@
 #include <QTimer>
 #include "Bobject/bglobalobjs.h"
 #include "Bobject/bobject.h"
+#include "bcleaner.h"
+#include "bbackglound.h"
 
 namespace Bigo {
 
@@ -16,12 +18,14 @@ namespace Bigo {
         virtual ~BbaseWidget();
     public:
         virtual void paintEvent(QPaintEvent *);
-        void deletObj(Bobject *bobj);
-    protected slots:
-        virtual void cleanObjs();
-
+        void setbackground(BBackglound *backglound);
+    public slots:
+        void delete_obj(Bobject *bobj);
+    signals:
+        void evt_delete(Bobject *bobj);
     private:
-        QTimer *m_cleanTimer;
+        BCleaner *m_cleaner;
+        BBackglound *m_backglound;
     };
 }
 

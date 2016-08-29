@@ -35,6 +35,7 @@ public:
     void randTurn();
     void hook_start();
     void hook_stop();
+    void hook_kill_myself();
     void shoot();
     Bbool ignoreCrash(Bobject *bobj);
     void updateArea();

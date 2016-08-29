@@ -3,18 +3,35 @@ namespace Bigo {
     Bstatic::Bstatic(QWidget *parent) :
         Bobject(parent)
     {
-        m_id.id = BglobalObjs::allObjsCount();
-        BglobalObjs::allObjsAppend(this);
+        show();
     }
 
     Bstatic::~Bstatic()
     {
-        BglobalObjs::allObjsremove(m_id.id);
+        if(isExist())
+            killed();
+    }
+
+
+    void Bstatic::show()
+    {
+        m_id.exist = true;
+        BglobalObjs::stcObjappend(&m_id, this);
+    }
+
+    void Bstatic::disappeared()
+    {
+        BglobalObjs::stcObjremove(&m_id);
+        m_id.exist = false;
     }
 
     void Bstatic::killed()
     {
-        m_id.exist = false;
+        if(isExist())
+        {
+            disappeared();
+//            emit evt_release();
+        }
     }
 }
 

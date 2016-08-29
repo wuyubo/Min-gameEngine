@@ -12,6 +12,8 @@ namespace Bigo {
     public:
         explicit Bstatic(QWidget *parent = 0);
         virtual ~Bstatic();
+        void show();
+        void disappeared();
         virtual void killed();
 
     signals:

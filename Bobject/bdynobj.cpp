@@ -2,10 +2,10 @@
 
 namespace Bigo {
 
-    Bu32 BdynObj::gl_id = 1;
+    Bu32 BdynObj::gl_dyn_id_value = 1;
     QWidget *BdynObj::m_widget = NULL;
     BdynObj::BdynObj(QWidget *parent):
-        QThread(parent),
+        QObject(parent),
         running(false),
         m_direction(UP),
         m_step(BIGSTEP),
@@ -17,19 +17,24 @@ namespace Bigo {
         createId();
         m_timer = new QTimer(m_widget);
         connect(m_timer,SIGNAL(timeout()), this, SLOT(moving()));
+        connect(this,SIGNAL(evt_kill_myself()),this,SLOT(kill_myself()));
+        connect(this, SIGNAL(evt_release()), this, SLOT(release_myslef()));
+        m_busy = false;
     }
 
 
     BdynObj::~BdynObj()
     {
-        while(running)
-            stopMove();
+        disconnect(m_timer,SIGNAL(timeout()), this, SLOT(moving()));
+        disconnect(this,SIGNAL(evt_kill_myself()),this,SLOT(kill_myself()));
+        disconnect(this, SIGNAL(evt_release()), this, SLOT(release_myslef()));
+
         delete m_timer;
     }
 
     void BdynObj::createId()
     {
-        m_id.id = gl_id++;
+        m_id.id = gl_dyn_id_value++;
         m_id.fofoe = FRI;
         m_id.type = 0;
         m_id.remain = 0;
@@ -38,17 +43,24 @@ namespace Bigo {
 
     void BdynObj::run()
     {
-        while(running)
-        {
-            moving();
-            msleep(m_speed);
-            hook_run();
-        }
+        moveStep();
+        hook_run();
     }
 
     void BdynObj::moving()
     { 
-        moveStep();
+//        lock();
+        if(m_busy) return;
+        if(running)
+        {
+            emit evt_send_to_thread(this);
+        }
+        else
+        {
+            m_timer->stop();
+            emit release();
+        }
+//        unlock();
     }
 
     void BdynObj::moveStep()
@@ -56,81 +68,26 @@ namespace Bigo {
         moveAction();
         isTouch();
         updateArea();
-        hook_moveStep();
         m_widget->update();
-
+        hook_moveStep();
     }
 
-    void BdynObj::moveAction()
+
+    void BdynObj::release()
     {
-        switch (m_direction) {
-        case UP:
-            m_area.site_begin.y -= m_step;
-            m_area.site_end.y -= m_step;
-            break;
-        case DN:
-            m_area.site_begin.y += m_step;
-            m_area.site_end.y += m_step;
-            break;
-        case LF:
-            m_area.site_begin.x -= m_step;
-            m_area.site_end.x -= m_step;
-            break;
-        case RG:
-            m_area.site_begin.x += m_step;
-            m_area.site_end.x += m_step;
-            break;
-        default:
-            break;
-        }
+        emit evt_release();
     }
 
-    void BdynObj::moveBack()
+    void BdynObj::release_myslef()
     {
-        switch (m_direction) {
-        case UP:
-            m_area.site_begin.y += m_beyond;
-            m_area.site_end.y += m_beyond;
-            break;
-        case DN:
-            m_area.site_begin.y -= m_beyond;
-            m_area.site_end.y -= m_beyond;
-            break;
-        case LF:
-            m_area.site_begin.x += m_beyond;
-            m_area.site_end.x += m_beyond;
-            break;
-        case RG:
-            m_area.site_begin.x -= m_beyond;
-            m_area.site_end.x -= m_beyond;
-            break;
-        default:
-            break;
-        }
-        m_beyond = 0;
-        updateArea();
-    }
-
-    void BdynObj::updateArea()
-    {
-
-    }
-
-    Bbool BdynObj::isTouch()
-    {    
-        return m_isTouch;
-    }
-
-
-    Bbool BdynObj::doRegion()
-    {
-        return false;
+        if(isExist()) kill_myself();
+        deleteLater();
+//        delete this;
     }
 
     void BdynObj::killed()
     {
-        stopMove();
-        delete this;
+        emit evt_kill_myself();
     }
     void BdynObj::hook_moveStep()
     {
@@ -171,19 +128,22 @@ namespace Bigo {
 
     void BdynObj::startMove()
     {
-        running = true;
-//        this->start();
-        m_timer->start(m_speed);
+        if(!running)
+        {
+            running = true;
+            m_timer->start(m_speed);
+        }
         hook_start();
 
     }
 
     void BdynObj::stopMove()
     {
-        running = false;
-        m_timer->stop();
-//        while(isRunning());
-        hook_stop();
+        if(running)
+        {
+            running = false;
+            hook_stop();
+        }
     }
 
     BdynObjId_t BdynObj::getID() const
@@ -191,13 +151,23 @@ namespace Bigo {
         return m_id;
     }
 
-    void BdynObj::dynmsleep(int msec)
-    {
-        sleep(msec);
-    }
+
     Bbool BdynObj::isExist()
     {
         return m_id.exist;
+    }
+    void BdynObj::lock()
+    {
+        m_mutex.lock();
+        m_busy = true;
+        m_mutex.unlock();
+    }
+
+    void BdynObj::unlock()
+    {
+        m_mutex.lock();
+        m_busy = false;
+        m_mutex.unlock();
     }
 }
 

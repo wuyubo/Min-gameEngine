@@ -18,6 +18,7 @@ TankWidget::~TankWidget()
     delete leftbtn;
     delete rightbtn;
     delete m_enManage;
+    delete m_bg;
 
 
 }
@@ -26,13 +27,10 @@ void TankWidget::init()
     this->resize(WINDOWS_W, WINDOWS_H);
     this->setWindowIcon(QIcon("img/icon.png"));
     this->setWindowTitle("坦克大战");
-    m_bg_rect = new Brect(this);
-    m_bg_rect->createDrawAreaThree(TBIGX_BG,TBIGY_BG, 2, TWIND_BG, THEIG_BG, 0);
-    m_bg_rect->setStyle(RSOLID);
-
+    m_bg = new BBackglound(this);
+    m_bg->createDrawAreaThree(TBIGX_BG,TBIGY_BG, 2, TWIND_BG, THEIG_BG, 0);
+    setbackground(m_bg);
     createTank(MEARMY);
-//    createTank(ENARMY);
-//    createTank(ENARMY);
     m_brick = new Tbrick(this);
     m_brick->location(200, 300);
     m_enManage = new EnemyManage(this);

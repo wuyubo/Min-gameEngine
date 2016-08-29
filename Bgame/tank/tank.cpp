@@ -22,8 +22,8 @@ Tank::Tank(TANKTYPE type, QWidget *parent):
 
 Tank::~Tank()
 {
-    if(running)
-        this->stopMove();
+    delete m_shootTimer;
+
     switch (m_type) {
     case MEARMY:
         mearmy_count--;
@@ -34,9 +34,8 @@ Tank::~Tank()
     default:
         break;
     }
-    m_img->killed();
-    delete m_img;
-    delete m_shootTimer;
+//    m_img->disappeared();
+//    delete m_img;
 }
 
 void Tank::tankInit()
@@ -205,6 +204,13 @@ void Tank::hook_start()
 void Tank::hook_stop()
 {
     m_shootTimer->stop();
+}
+
+void Tank::hook_kill_myself()
+{
+    m_shootTimer->stop();
+    disconnect(m_shootTimer,SIGNAL(timeout()), this, SLOT(randshoot()));
+    m_img->killed();
 }
 
 

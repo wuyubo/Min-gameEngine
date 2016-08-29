@@ -53,6 +53,7 @@ namespace Bigo {
     enum IDVAULE_BSTATE{
         BIDSTATIC,
         BIDDYNAMI,
+        BIDBACKGL,
     };
 
     enum IDVAULE_BTYPE{

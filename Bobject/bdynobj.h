@@ -7,6 +7,7 @@
 #include <QVector>
 #include "Bobject/btypes.h"
 #include "Bobject/bobject.h"
+#include <QMutex>
 
 namespace Bigo {
     enum DIRECTION{
@@ -31,7 +32,7 @@ namespace Bigo {
         SUPSTEP = 80,
     };
 
-    class BdynObj: public QThread
+    class BdynObj: public QObject
     {
     Q_OBJECT
     public:
@@ -41,27 +42,37 @@ namespace Bigo {
     public:
         virtual void run();
         virtual void moveStep();
-        virtual void moveAction();
-        virtual void moveBack();
-        virtual void updateArea();
-        virtual Bbool isTouch();
-        virtual Bbool doRegion();
+        virtual void moveAction() = 0;
+        virtual void moveBack() = 0;
+        virtual void updateArea() = 0;
+        virtual Bbool isTouch() = 0;
+        virtual Bbool doRegion() = 0;
         virtual void killed();
         virtual void hook_moveStep();
         virtual void hook_run();
         virtual void hook_start();
         virtual void hook_stop();
+        virtual void release();
 
     public slots:
         virtual void moving();
+        virtual void kill_myself() = 0;
+        virtual void release_myslef();
+    signals:
+        void evt_send_to_thread(BdynObj *myself);
+        void evt_kill_myself();
+        void evt_release();
+
+
     public:
         virtual void turnDirection(DIRECTION d);
         DIRECTION directioin() const;
         virtual void setSpeed(Bint speed);
         Bint speed() const;
         BdynObjId_t getID() const;
-        void dynmsleep(int msec);
         Bbool isExist();
+        void lock();
+        void unlock();
 
     public:
         void startMove();
@@ -75,13 +86,17 @@ namespace Bigo {
         bool m_isTouch;
         BdynObjId_t m_id;
         Bdarea_t m_area;
-        static Bu32 gl_id;
+
         int m_beyond;
         QTimer *m_timer;
+        static Bu32 gl_dyn_id_value;
 
         static QWidget *m_widget;
+        QMutex m_mutex;
+        Bbool m_busy;
     };
-    typedef QVector<BdynObj *> BdynbObjList;
+    typedef QMap<BdynObjId_t *, BdynObj*> BdynObjMap_t;
+    typedef QList<BdynObj *> BdynObjList_t;
 }
 
 

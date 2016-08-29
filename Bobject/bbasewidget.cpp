@@ -1,83 +1,69 @@
 #include "bbasewidget.h"
+#include "assert.h"
 
 namespace Bigo {
 
     BbaseWidget::BbaseWidget(QWidget *parent) :
         QWidget(parent)
     {
-        m_cleanTimer = new QTimer(this);
-        connect(m_cleanTimer,SIGNAL(timeout()), this, SLOT(cleanObjs()));
-        m_cleanTimer->start(500);
+        m_backglound = NULL;
+        BglobalObjs::setWidget(this);
+        BglobalObjs::create_ptEngine(3, true);
+//        m_cleaner = new BCleaner(this);
+        connect(this, SIGNAL(evt_delete(Bobject *)), this, SLOT(delete_obj(Bobject*)));
     }
 
     BbaseWidget::~BbaseWidget()
     {
-        Bobject *temp;
-        while (BglobalObjs::dynObjsCount() > 0)
-        {
-            temp = BglobalObjs::gl_allObjs[0];
-            deletObj(temp);
+        BdynObjList_t dynobjlist = BglobalObjs::dynObjList();
+        foreach (BdynObj *dobj, dynobjlist) {
+            dobj->kill_myself();
+            dobj->release_myslef();
         }
+        dynobjlist.clear();
+        BobjectList_t stcobjlist = BglobalObjs::stcObjList();
+        foreach (Bobject *bobj, stcobjlist) {
+            bobj->killed();
+            bobj->release_myslef();
+        }
+        stcobjlist.clear();
+//        m_cleaner->stopClean();
+//        delete m_cleaner;
+        BglobalObjs::realease_ptEngine();
+        disconnect(this, SIGNAL(evt_delete(Bobject *)), this, SLOT(delete_obj(Bobject*)));
     }
 
     void BbaseWidget::paintEvent(QPaintEvent *)
     {
         QPainter painter(this);
-
-        Bobject *temp;
-        for(QVector<Bobject*>::Iterator iter = BglobalObjs::gl_allObjs.begin();
-            iter != BglobalObjs::gl_allObjs.end(); iter++)
-        {
-            temp = (Bobject*)*iter;
-            temp->brush(painter);
-        }
-    }
-
-    void BbaseWidget::deletObj(Bobject *bobj)
-    {
-         BdynObj *tempdyn;
-        if(bobj->m_id.state == BIDDYNAMI)
-        {
-           tempdyn= BglobalObjs::dynObjReflect(bobj);
-           tempdyn->killed();
-           delete tempdyn;
-        }
-        else
-        {
-            bobj->killed();
-            delete bobj;
-        }
-    }
-
-    void BbaseWidget::cleanObjs()
-    {
-        Bobject *temp;
-        BdynObj *tempdyn;
-        BdynbObjList dynlist =  BglobalObjs::gl_dynObjs;
-
-        for(QVector<BdynObj*>::Iterator iter = dynlist.begin();
-            iter != dynlist.end(); iter++)
-        {
-            tempdyn = *iter;
-
-            if(!tempdyn->isExist())
+        BobjectList_t allobjlist = BglobalObjs::stcObjList();
+        if(m_backglound != NULL)
+            m_backglound->brush(painter);
+        BglobalObjs::paint_begin();
+        foreach (Bobject *bobj, allobjlist) {
+            if(!bobj->isExist())
             {
-                tempdyn->killed();
-                delete tempdyn;
+//                delete bobj;
+                break;
             }
+            bobj->brush(painter);
         }
+        BglobalObjs::paint_end();
 
-        BobjectLists alllist = BglobalObjs::gl_allObjs;
-        for(QVector<Bobject*>::Iterator iter = alllist.begin();
-            iter != alllist.end(); iter++)
-        {
-            temp = *iter;
-            if(!temp->isExist())
-            {
-                deletObj(temp);
-            }
-        }
+        BglobalObjs::dealfinished();
 
     }
 
+    void BbaseWidget::delete_obj(Bobject *bobj)
+    {
+//        bobj->release_myslef();
+//        delete bobj;
+    }
+
+    void BbaseWidget::setbackground(BBackglound *backglound)
+    {
+        assert(backglound != NULL);
+        m_backglound = backglound;
+
+    }
 }

@@ -9,12 +9,14 @@ class Tbrick : public Bimage
     Q_OBJECT
 public:
     explicit Tbrick(QWidget *parent = 0);
-    void bomb();
+    void setBrickType(int type);
+    void initSrc();
+    void location(int x, int y);
 
 signals:
 
-public:
-    Explope *m_bomb;
+private:
+    int m_type;
 
 };
 

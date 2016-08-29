@@ -17,7 +17,7 @@ public:
     void location(int x, int y, int r);
     void setImgPath(QString path);
     void updateArea();
-
+    void hook_kill_myself();
 public:
     static void bomb(int x, int y, int r);
 
